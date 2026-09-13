@@ -1,0 +1,585 @@
+/* ==========================
+   NAVEGAÇÃO
+========================== */
+
+function showScreen(screenId) {
+
+  const screens =
+    document.querySelectorAll(".screen");
+
+  screens.forEach(function(screen) {
+
+    screen.classList.remove("active");
+
+  });
+
+  document
+    .getElementById(screenId)
+    .classList.add("active");
+
+  window.scrollTo(0, 0);
+}
+
+
+/* ==========================
+   CRIAR CONTA
+========================== */
+
+function createAccount() {
+
+  const name =
+    document
+      .getElementById("registerName")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("registerPassword")
+      .value
+      .trim();
+
+  const address =
+    document
+      .getElementById("registerAddress")
+      .value
+      .trim();
+
+
+  if (
+    !name ||
+    !email ||
+    !password ||
+    !address
+  ) {
+
+    alert(
+      "Preencha todos os campos para criar sua conta."
+    );
+
+    return;
+  }
+
+
+  const user = {
+
+    name: name,
+
+    email: email,
+
+    password: password,
+
+    address: address
+
+  };
+
+
+  localStorage.setItem(
+    "reportFireUser",
+    JSON.stringify(user)
+  );
+
+
+  alert(
+    "Conta criada com sucesso!"
+  );
+
+
+  document
+    .getElementById("loginEmail")
+    .value = email;
+
+  document
+    .getElementById("loginPassword")
+    .value = password;
+
+
+  showScreen("loginScreen");
+}
+
+
+/* ==========================
+   LOGIN
+========================== */
+
+function login() {
+
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value
+      .trim();
+
+
+  if (!email || !password) {
+
+    alert(
+      "Digite seu e-mail e sua senha."
+    );
+
+    return;
+  }
+
+
+  const savedUser =
+    JSON.parse(
+      localStorage.getItem(
+        "reportFireUser"
+      )
+    );
+
+
+  if (!savedUser) {
+
+    const user = {
+
+      name: "Usuário",
+
+      email: email,
+
+      password: password,
+
+      address: ""
+
+    };
+
+
+    localStorage.setItem(
+      "reportFireUser",
+      JSON.stringify(user)
+    );
+
+  } else {
+
+    if (
+      email !== savedUser.email ||
+      password !== savedUser.password
+    ) {
+
+      alert(
+        "E-mail ou senha incorretos."
+      );
+
+      return;
+    }
+
+  }
+
+
+  const user =
+    JSON.parse(
+      localStorage.getItem(
+        "reportFireUser"
+      )
+    );
+
+
+  document
+    .getElementById("userName")
+    .textContent = user.name;
+
+
+  updateStatistics();
+
+
+  showScreen("homeScreen");
+}
+
+
+/* ==========================
+   SAIR
+========================== */
+
+function logout() {
+
+  showScreen("loginScreen");
+
+}
+
+
+/* ==========================
+   FOTO
+========================== */
+
+function previewPhoto(event) {
+
+  const file =
+    event.target.files[0];
+
+
+  if (!file) {
+
+    return;
+
+  }
+
+
+  const preview =
+    document.getElementById(
+      "photoPreview"
+    );
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function(event) {
+
+      preview.innerHTML = `
+        <img
+          src="${event.target.result}"
+          alt="Foto da ocorrência"
+        >
+      `;
+
+    };
+
+
+  reader.readAsDataURL(file);
+}
+
+
+/* ==========================
+   LOCALIZAÇÃO
+========================== */
+
+function getLocation() {
+
+  const locationText =
+    document.getElementById(
+      "locationText"
+    );
+
+
+  locationText.textContent =
+    "Detectando localização...";
+
+
+  if (!navigator.geolocation) {
+
+    locationText.textContent =
+      "Localização não disponível neste navegador.";
+
+    return;
+
+  }
+
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(position) {
+
+      const latitude =
+        position.coords.latitude
+          .toFixed(6);
+
+
+      const longitude =
+        position.coords.longitude
+          .toFixed(6);
+
+
+      locationText.textContent =
+        "Latitude: " +
+        latitude +
+        " | Longitude: " +
+        longitude;
+
+
+      localStorage.setItem(
+
+        "reportFireLocation",
+
+        JSON.stringify({
+
+          latitude: latitude,
+
+          longitude: longitude
+
+        })
+
+      );
+
+    },
+
+
+    function() {
+
+      locationText.textContent =
+        "Não foi possível obter a localização.";
+
+    }
+
+  );
+
+}
+
+
+/* ==========================
+   ENVIAR DENÚNCIA
+========================== */
+
+function sendReport() {
+
+  const description =
+    document
+      .getElementById("description")
+      .value
+      .trim();
+
+
+  const fireType =
+    document
+      .getElementById("fireType")
+      .value;
+
+
+  const photo =
+    document
+      .getElementById("photoInput")
+      .files[0];
+
+
+  const location =
+    localStorage.getItem(
+      "reportFireLocation"
+    );
+
+
+  if (!photo) {
+
+    alert(
+      "Selecione uma foto da ocorrência."
+    );
+
+    return;
+
+  }
+
+
+  if (!location) {
+
+    alert(
+      "Detecte a localização da ocorrência."
+    );
+
+    return;
+
+  }
+
+
+  if (!fireType) {
+
+    alert(
+      "Selecione o tipo de ocorrência."
+    );
+
+    return;
+
+  }
+
+
+  if (!description) {
+
+    alert(
+      "Descreva a ocorrência."
+    );
+
+    return;
+
+  }
+
+
+  let reports =
+    JSON.parse(
+      localStorage.getItem(
+        "reportFireReports"
+      )
+    ) || [];
+
+
+  const newReport = {
+
+    id: Date.now(),
+
+    type: fireType,
+
+    description: description,
+
+    location: JSON.parse(location),
+
+    status: "Pendente",
+
+    date:
+      new Date()
+        .toLocaleString("pt-BR")
+
+  };
+
+
+  reports.push(newReport);
+
+
+  localStorage.setItem(
+
+    "reportFireReports",
+
+    JSON.stringify(reports)
+
+  );
+
+
+  updateStatistics();
+
+
+  document
+    .getElementById("successModal")
+    .classList
+    .add("show");
+
+}
+
+
+/* ==========================
+   FECHAR CONFIRMAÇÃO
+========================== */
+
+function closeSuccessModal() {
+
+  document
+    .getElementById("successModal")
+    .classList
+    .remove("show");
+
+
+  document
+    .getElementById("description")
+    .value = "";
+
+
+  document
+    .getElementById("fireType")
+    .value = "";
+
+
+  document
+    .getElementById("photoInput")
+    .value = "";
+
+
+  document
+    .getElementById("photoPreview")
+    .innerHTML = "";
+
+
+  document
+    .getElementById("locationText")
+    .textContent =
+      "Clique no botão para detectar sua localização.";
+
+
+  localStorage.removeItem(
+    "reportFireLocation"
+  );
+
+
+  showScreen("homeScreen");
+}
+
+
+/* ==========================
+   ESTATÍSTICAS
+========================== */
+
+function updateStatistics() {
+
+  const reports =
+    JSON.parse(
+      localStorage.getItem(
+        "reportFireReports"
+      )
+    ) || [];
+
+
+  const total =
+    reports.length;
+
+
+  const pending =
+    reports.filter(
+      function(report) {
+
+        return report.status === "Pendente";
+
+      }
+    ).length;
+
+
+  const resolved =
+    reports.filter(
+      function(report) {
+
+        return report.status === "Resolvido";
+
+      }
+    ).length;
+
+
+  const attendance =
+    reports.filter(
+      function(report) {
+
+        return report.status === "Em atendimento";
+
+      }
+    ).length;
+
+
+  document
+    .getElementById("totalReports")
+    .textContent = total;
+
+
+  document
+    .getElementById("pendingReports")
+    .textContent = attendance;
+
+
+  document
+    .getElementById("waitingReports")
+    .textContent = pending;
+
+
+  document
+    .getElementById("resolvedReports")
+    .textContent = resolved;
+
+}
+
+
+/* ==========================
+   INICIALIZAÇÃO
+========================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    updateStatistics();
+
+  }
+);

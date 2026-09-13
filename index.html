@@ -1,0 +1,444 @@
+<div class="app">
+
+  <!-- TELA DE LOGIN -->
+  <section id="loginScreen" class="screen active">
+
+    <div class="login-container">
+
+      <div class="logo-area">
+        <div class="logo-placeholder"></div>
+        <h1>Report Fire</h1>
+        <p>Ajude a preservar o meio ambiente</p>
+      </div>
+
+      <div class="form-group">
+        <label for="loginEmail">E-mail</label>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Digite seu e-mail"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Senha</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Digite sua senha"
+        >
+      </div>
+
+      <button class="btn primary" onclick="login()">
+        Entrar
+      </button>
+
+      <button
+        class="btn secondary"
+        onclick="showScreen('registerScreen')"
+      >
+        Criar Conta
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- TELA DE CRIAR CONTA -->
+  <section id="registerScreen" class="screen">
+
+    <div class="form-container">
+
+      <button
+        class="back-button"
+        onclick="showScreen('loginScreen')"
+      >
+        Voltar
+      </button>
+
+      <h1>Criar conta</h1>
+
+      <p class="description">
+        Coloque seus dados para criar sua conta.
+      </p>
+
+      <div class="form-group">
+
+        <label for="registerName">
+          Nome
+        </label>
+
+        <input
+          type="text"
+          id="registerName"
+          placeholder="Digite seu nome"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="registerEmail">
+          E-mail
+        </label>
+
+        <input
+          type="email"
+          id="registerEmail"
+          placeholder="Digite seu e-mail"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="registerPassword">
+          Senha
+        </label>
+
+        <input
+          type="password"
+          id="registerPassword"
+          placeholder="Crie uma senha"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="registerAddress">
+          Endereço
+        </label>
+
+        <input
+          type="text"
+          id="registerAddress"
+          placeholder="Digite seu endereço"
+        >
+
+      </div>
+
+      <button
+        class="btn primary"
+        onclick="createAccount()"
+      >
+        Criar Conta
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- TELA INICIAL -->
+  <section id="homeScreen" class="screen">
+
+    <div class="home-container">
+
+      <header class="home-header">
+
+        <div class="brand">
+
+          <div class="brand-logo"></div>
+
+          <div>
+
+            <h2>Report Fire</h2>
+
+            <span>
+              Sistema de Denúncias
+            </span>
+
+          </div>
+
+        </div>
+
+        <button
+          class="settings-button"
+          onclick="logout()"
+        >
+          Configurações
+        </button>
+
+      </header>
+
+
+      <div class="welcome">
+
+        <h2>
+          Olá, <span id="userName">Usuário</span>
+        </h2>
+
+        <p>
+          Ajude a combater as queimadas.
+        </p>
+
+      </div>
+
+
+      <div class="statistics">
+
+        <div class="stat-card">
+
+          <strong id="totalReports">
+            0
+          </strong>
+
+          <span>
+            Total de denúncias
+          </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <strong id="pendingReports">
+            0
+          </strong>
+
+          <span>
+            Em atendimento
+          </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <strong id="waitingReports">
+            0
+          </strong>
+
+          <span>
+            Pendentes
+          </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <strong id="resolvedReports">
+            0
+          </strong>
+
+          <span>
+            Resolvidos
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="new-report-button"
+        onclick="showScreen('reportScreen')"
+      >
+        Nova Denúncia
+      </button>
+
+
+      <button
+        class="logout-link"
+        onclick="logout()"
+      >
+        Sair da conta
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- TELA DE NOVA DENÚNCIA -->
+  <section id="reportScreen" class="screen">
+
+    <div class="report-container">
+
+      <button
+        class="back-button"
+        onclick="showScreen('homeScreen')"
+      >
+        Voltar
+      </button>
+
+      <h1>Nova Denúncia</h1>
+
+      <p class="description">
+        Informe os dados da ocorrência.
+      </p>
+
+
+      <!-- FOTO -->
+
+      <div class="report-section">
+
+        <label class="section-label">
+          Foto da ocorrência
+        </label>
+
+        <label class="photo-button">
+
+          <span>
+            Selecionar foto
+          </span>
+
+          <input
+            type="file"
+            id="photoInput"
+            accept="image/*"
+            capture="environment"
+            onchange="previewPhoto(event)"
+          >
+
+        </label>
+
+        <div
+          id="photoPreview"
+          class="photo-preview"
+        ></div>
+
+      </div>
+
+
+      <!-- LOCALIZAÇÃO -->
+
+      <div class="report-section">
+
+        <label class="section-label">
+          Localização
+        </label>
+
+        <div class="location-box">
+
+          <strong>
+            Localização da ocorrência
+          </strong>
+
+          <p id="locationText">
+            Clique no botão para detectar sua localização.
+          </p>
+
+        </div>
+
+        <button
+          class="location-button"
+          onclick="getLocation()"
+        >
+          Detectar localização
+        </button>
+
+      </div>
+
+
+      <!-- DESCRIÇÃO -->
+
+      <div class="report-section">
+
+        <label
+          class="section-label"
+          for="description"
+        >
+          Descrição
+        </label>
+
+        <textarea
+          id="description"
+          placeholder="Descreva o que está acontecendo..."
+          rows="5"
+        ></textarea>
+
+      </div>
+
+
+      <!-- TIPO DE OCORRÊNCIA -->
+
+      <div class="report-section">
+
+        <label
+          class="section-label"
+          for="fireType"
+        >
+          Tipo de ocorrência
+        </label>
+
+        <select id="fireType">
+
+          <option value="">
+            Selecione o tipo
+          </option>
+
+          <option value="Queimada">
+            Queimada
+          </option>
+
+          <option value="Incêndio florestal">
+            Incêndio florestal
+          </option>
+
+          <option value="Queima de lixo">
+            Queima de lixo
+          </option>
+
+          <option value="Fumaça suspeita">
+            Fumaça suspeita
+          </option>
+
+          <option value="Outro">
+            Outro
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="btn primary send-button"
+        onclick="sendReport()"
+      >
+        Enviar Denúncia
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- CONFIRMAÇÃO -->
+
+  <div
+    id="successModal"
+    class="modal"
+  >
+
+    <div class="modal-content">
+
+      <div class="success-message">
+        Denúncia registrada
+      </div>
+
+      <h2>
+        Denúncia registrada com sucesso!
+      </h2>
+
+      <p>
+        Sua ocorrência foi registrada.
+        Obrigado por contribuir para o combate às queimadas.
+      </p>
+
+      <button
+        class="btn primary"
+        onclick="closeSuccessModal()"
+      >
+        Voltar para o início
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
